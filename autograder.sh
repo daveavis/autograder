@@ -13,7 +13,7 @@ home_path=$(echo ~)
 tools_path=$(dirname "$0")
 
 # Path to the directory containing all of the cloned repositories
-clone_path="$tools_path/../clones"
+clone_path="$tools_path/clones"
 if [ ! -d "$clone_path" ]
 	mkdir -p "$clone_path"
 fi
@@ -309,10 +309,10 @@ clone-one() {
 	then
 		git -C "$dir/$lab_name-$student_username" pull
 	else
-		git ls-remote https://github.com/$course/$lab_name-$student_username.git > /dev/null 2>&1
+		git ls-remote https://github.com/$course/$lab_name-$student_username.git/ > /dev/null 2>&1
 		if [ $? -eq 0 ]
 		then
-			git clone https://github.com/$course/$lab_name-$student_username.git
+			git clone https://github.com/$course/$lab_name-$student_username.git/
 		else # Repo probably doesn't exist. Usually because of a typo.
 			echo "Repo does not exist."
 			skip=1
@@ -331,10 +331,10 @@ clone-list() {
 		then
 			git -C "$dir/$lab_name-$USER" pull
 		else
-			git ls-remote https://github.com/$course/$lab_name-$USER.git > /dev/null 2>&1
+			git ls-remote https://github.com/$course/$lab_name-$USER.git/ > /dev/null 2>&1
 			if [ $? -eq 0 ]
 			then
-				git clone https://github.com/$course/$lab_name-$USER.git
+				git clone https://github.com/$course/$lab_name-$USER.git/
 			else # Repo probably doesn't exist. Usually because of a typo.
 				echo "Repo does not exist."
 				#skip=1
@@ -352,10 +352,10 @@ clone-base() {
 	then
 		git -C "$dir/$base_repo" pull
 	else
-		git ls-remote https://github.com/$course/$base_repo.git > /dev/null 2>&1
+		git ls-remote https://github.com/$course/$base_repo.git/ > /dev/null 2>&1
 		if [ $? -eq 0 ]
 		then
-			git clone https://github.com/$course/$base_repo.git
+			git clone https://github.com/$course/$base_repo.git/
 		else
 			echo "Base repo does not exist."
 			#skip=1
