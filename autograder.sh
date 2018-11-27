@@ -7,14 +7,15 @@ skip_clone=0
 
 # Path to my home folder
 # Works in Bash on Mac/Linux, and Git Bash on Windows.
-home_path=$(echo ~)
+home_path="$(echo ~)"
 
 # Path to the directory containging this script and associated scripts
-tools_path=$(dirname "$0")
+tools_path="$(dirname "$0")"
 
 # Path to the directory containing all of the cloned repositories
 clone_path="$tools_path/clones"
 if [ ! -d "$clone_path" ]
+then
 	mkdir -p "$clone_path"
 fi
 
@@ -64,7 +65,7 @@ quiet=false
 protocol="https"
 
 # The teacher's github username. Used with the clone_all.sh script. Overridden with the -a option.
-$github_username="daveavis"
+github_username="daveavis"
 
 # default commit message.  Used in conjunction with -p.  Updated when -m is specified.
 message="Update from Mr. Avis"		# default commit message
