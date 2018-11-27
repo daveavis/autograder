@@ -7,10 +7,12 @@ skip_clone=0
 
 # Path to my home folder
 # Works in Bash on Mac/Linux, and Git Bash on Windows.
-home_path="$(echo ~)"
+#home_path="$(echo ~)"
+home_path="$HOME"
 
 # Path to the directory containging this script and associated scripts
 tools_path="$(dirname "$0")"
+tools_path="$(readlink -f $tools_path)"  # expand relative path
 
 # Path to the directory containing all of the cloned repositories
 clone_path="$tools_path/clones"
@@ -34,7 +36,7 @@ list_path="$tools_path/lists"
 # Special Test file dir (not currently used)
 special_test_path="$tools_path/special_tests"
 
-# Directory containing supporting jar files
+# Directory containing supporting jar files 
 jars_path="$tools_path/jars"
 
 # name of the clone_all.sh script
@@ -380,10 +382,10 @@ compile-main() {
 run-tests() {
 	# run jUnit tests
 	jUnit_errors=""
-	num_jUnit_errors=`java -jar "$tools_path"/$jUnit_jar --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors | grep -c "\[X\]"`
+	num_jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors | grep -c "\[X\]"`
 	if [ "$num_jUnit_errors" -ne "0" ]
 	then
-		jUnit_errors=`java -jar "$tools_path"/$jUnit_jar --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors | grep "\[X\]"`
+		jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors | grep "\[X\]"`
 		$quiet || echo "  Unit test failures: $num_jUnit_errors"
 		$quiet || echo "$jUnit_errors"
 	fi
@@ -403,7 +405,7 @@ compile-tests() {
 
 run-checkstyle() {
 	# run Checkstyle
-	checkstyle_errors=`java -jar "$tools_path"/$checkstyle_jar -c $checkstyle_config $main_file | grep "[ERROR]" | wc -l`
+	checkstyle_errors=`java -jar "$checkstyle_jar" -c $checkstyle_config $main_file | grep "[ERROR]" | wc -l`
 	checkstyle_errors=$(( $checkstyle_errors ))    # trim whitespace
 	if [ "$checkstyle_errors" -ne "0" ]
 	then
