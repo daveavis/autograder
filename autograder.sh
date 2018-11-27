@@ -152,8 +152,8 @@ do
 			lab_name=$(echo "$base_repo" | tr '[:upper:]' '[:lower:]')
 			;;
 		g)
-			grade_file="$tools_path/$OPTARG"
-			if [ ! -e "./$grade_file" ]
+			grade_file="$OPTARG"
+			if [ ! -e "$grade_path/$grade_file" ]
 			then
 				echo "File $grade_file does not exist."
 				exit 1
@@ -233,9 +233,11 @@ grade() {
 	total_grade=100
 	while read test points
 	do
-		#echo `echo $jUnit_errors | grep $test`
 		points=`echo $points | tr -d '\r'`
-		error=`echo "$jUnit_errors" | grep $test`
+		if [ -n "$test" ]
+		then
+			error=`echo "$jUnit_errors" | grep $test`
+		fi
 		if [ "$error" != "" ]
 		then
 			total_grade=$((total_grade-points))
@@ -244,12 +246,10 @@ grade() {
 		then
 			total_grade=$((total_grade-points))
 		fi
-	done < <(cat "$grade_file")
+	done < <(cat "$grade_path/$grade_file")
 	if [ -n "$special_test_file" ]
 	then
-		#echo "run-special-test $main_file grade"
 		points=$(run-special-test "grade")
-		#echo "total_grade=$total_grade   points=$points"
 		total_grade=$((total_grade-points))
 	fi
 
@@ -261,7 +261,6 @@ compare-to-base() {
 	# should be able to count number of commits that aren't mine.
 	# then wouldn't have to clone the base repo at all.
 	diff_out=$(diff -b "$orig_path/$base_repo/$main_file" "$clone_path/$lab_name/$lab_name-$student_username/$main_file")
-	#echo "diff_out=$diff_out"
 	if [ -z "$diff_out" ]
 	then
 		echo "  Lab has not been started."
@@ -382,10 +381,10 @@ compile-main() {
 run-tests() {
 	# run jUnit tests
 	jUnit_errors=""
-	num_jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors | grep -c "\[X\]"`
+	num_jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors --details-theme=ascii | grep -c "\[X\]"`
 	if [ "$num_jUnit_errors" -ne "0" ]
 	then
-		jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors | grep "\[X\]"`
+		jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors --details-theme=ascii | grep "\[X\]"`
 		$quiet || echo "  Unit test failures: $num_jUnit_errors"
 		$quiet || echo "$jUnit_errors"
 	fi
@@ -394,7 +393,7 @@ run-tests() {
 compile-tests() {
 	# Compile jUnit tests
 	# Classpath separator is : on UNIX and Git Bash (Windows), and ; on Windows
-	javac -cp $classpath:"$tools_path"/$jUnit_jar $test_file 2> /dev/null
+	javac -cp $classpath:"$jUnit_jar" $test_file 2> /dev/null
 	if [ "$?" -ne "0" ]
 	then
 		$quiet || echo "  Unit tests failed to compile."
