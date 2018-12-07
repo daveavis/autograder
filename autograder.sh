@@ -381,10 +381,13 @@ compile-main() {
 run-tests() {
 	# run jUnit tests
 	jUnit_errors=""
-	num_jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors --details-theme=ascii | grep -c "\[X\]"`
+	test_class=$(basename $test_file .java)
+	# num_jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors --details-theme=ascii | grep -c "\[X\]"`
+	num_jUnit_errors=`java -jar "$jUnit_jar" -c $test_class --class-path $classpath --details=tree --disable-ansi-colors --details-theme=ascii | grep -c "\[X\]"`
 	if [ "$num_jUnit_errors" -ne "0" ]
 	then
-		jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors --details-theme=ascii | grep "\[X\]"`
+		# jUnit_errors=`java -jar "$jUnit_jar" --class-path $classpath --scan-class-path --details=tree --disable-ansi-colors --details-theme=ascii | grep "\[X\]"`
+		jUnit_errors=`java -jar "$jUnit_jar" -c $test_class --class-path $classpath --details=tree --disable-ansi-colors --details-theme=ascii | grep "\[X\]"`
 		$quiet || echo "  Unit test failures: $num_jUnit_errors"
 		$quiet || echo "$jUnit_errors"
 	fi
