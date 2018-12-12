@@ -225,7 +225,7 @@ run-special-test() {
 	# run any special tests provided
 	if [ -n "$special_test_file" ]
 	then
-		source $tools_path/$special_test_file $main_file $1
+		source $special_test_path/$special_test_file $main_file $1
 	fi
 }
 
